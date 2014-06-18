@@ -30,5 +30,16 @@ void loadFile()
 {
     vtkSmartPointer<vtkPLYReader> reader =
         vtkSmartPointer<vtkPLYReader>::New();
+
     reader->SetFileName ( inputFilename.c_str() );
+
+    reader->Update();
+    //reader->GetOutput()->Register(reader);
+    vtkPolyData * output = reader->GetOutput();
+
+    vtkIdType vert = output->GetNumberOfVerts();
+    cout << "verts: " << vert << endl;
+
+    vtkIdType poly = output->GetNumberOfPolys();
+    cout << "polys: " << poly << endl;
 }
