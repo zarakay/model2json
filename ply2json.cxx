@@ -1,5 +1,6 @@
 #include <vtkPLYReader.h>
 #include <vtkSmartPointer.h>
+#include <vtkCellArray.h>
 
 #include <iostream>
 
@@ -40,14 +41,33 @@ void generateJSON()
     vtkIdType vert = data->GetNumberOfPoints();
     cout << "Vertices: " << vert << endl;
 
-    vtkIdType poly = data->GetNumberOfCells();
-    cout << "Polygons: " << poly << endl;
-
     for(vtkIdType i = 0; i <= vert; i++)
     {
         double p[3];
         data->GetPoint(i, p);
-        cout << "Point " << i << ": x " << p[0] << " y " << p[1]
-            << " z " << p[2] << endl;
+        //cout << "Point " << i << ": x " << p[0] << " y " << p[1]
+        //    << " z " << p[2] << endl;
+    }
+
+    vtkPolyData * pdata = reader->GetOutput();
+    vtkCellArray * faces = pdata->GetPolys();
+
+    vtkIdType numCells = faces->GetNumberOfCells();
+    vtkIdType cellLocation = 0;
+
+    cout << "Polygons: " << numCells << endl;
+
+    for (vtkIdType i = 0; i < numCells; i++)
+    {
+        vtkIdType numIDs;
+        vtkIdType * pointIds;
+
+        faces->GetCell(cellLocation, numIDs, pointIds);
+        cellLocation += 1 + numIDs;
+
+        for (vtkIdType j = 0; j < numIDs; j++)
+        {
+            cout << pointIds[j] << endl;
+        }
     }
 }
