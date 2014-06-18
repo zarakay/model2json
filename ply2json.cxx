@@ -3,6 +3,7 @@
 #include <vtkCellArray.h>
 
 #include <iostream>
+#include <fstream>
 
 #include "ply2json.h"
 
@@ -10,7 +11,6 @@ using namespace std;
 
 static string inputFilename;
 static string outputFilename;
-
 
 int main( int argc, char ** argv )
 {
@@ -30,6 +30,11 @@ int main( int argc, char ** argv )
 
 void generateJSON()
 {
+    std::ofstream outputFile;
+    outputFile.open(outputFilename.c_str());
+
+    outputFile << "{\n";
+
     vtkSmartPointer<vtkPLYReader> reader =
         vtkSmartPointer<vtkPLYReader>::New();
 
@@ -39,15 +44,6 @@ void generateJSON()
 
     vtkDataSet * data = reader->GetOutput();
     vtkIdType vert = data->GetNumberOfPoints();
-    cout << "Vertices: " << vert << endl;
-
-    for(vtkIdType i = 0; i <= vert; i++)
-    {
-        double p[3];
-        data->GetPoint(i, p);
-        //cout << "Point " << i << ": x " << p[0] << " y " << p[1]
-        //    << " z " << p[2] << endl;
-    }
 
     vtkPolyData * pdata = reader->GetOutput();
     vtkCellArray * faces = pdata->GetPolys();
@@ -55,7 +51,19 @@ void generateJSON()
     vtkIdType numCells = faces->GetNumberOfCells();
     vtkIdType cellLocation = 0;
 
-    cout << "Polygons: " << numCells << endl;
+    outputFile << "\"metadata\":{\"formatVersion\":3,\"vertices\":" << vert << ",\"faces\":" << numCells << ",\"materials\":1},\n";
+    outputFile << "\"scale\":1.0,\n\"materials\":[{\"DbgColor\":15658734,\"DbgIndex\":0,\"DbgName\":\"default\",\"vertexColors\": false}],\n";
+    outputFile << "\"vertices\":[";
+    for(vtkIdType i = 0; i < vert; i++)
+    {
+        double p[3];
+        data->GetPoint(i, p);
+        outputFile << p[0] << "," << p[1] << "," << p[2];
+        if (i != vert - 1) outputFile << ",";
+    }
+
+    outputFile << "],\n";
+    outputFile << "\"faces\":[";
 
     for (vtkIdType i = 0; i < numCells; i++)
     {
@@ -67,7 +75,21 @@ void generateJSON()
 
         for (vtkIdType j = 0; j < numIDs; j++)
         {
-            cout << pointIds[j] << endl;
+            if (j == 0) outputFile << 0 << ",";
+            outputFile << pointIds[j];
+            if (i != numCells - 1) 
+            {
+                outputFile << ",";
+            } 
+            else
+            {
+                if(j != numIDs - 1) outputFile << ",";
+            }
         }
     }
+
+    outputFile << "]\n";
+    outputFile << "}\n";
+
+    outputFile.close();
 }
