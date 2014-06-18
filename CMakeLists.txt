@@ -5,10 +5,10 @@ PROJECT(ply2json)
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
  
-add_executable(ReadPLY MACOSX_BUNDLE ReadPLY)
+add_executable(ply2json MACOSX_BUNDLE ply2json)
  
 if(VTK_LIBRARIES)
-      target_link_libraries(ReadPLY ${VTK_LIBRARIES})
+      target_link_libraries(ply2json ${VTK_LIBRARIES})
   else()
-        target_link_libraries(ReadPLY vtkHybrid vtkWidgets)
+        target_link_libraries(ply2json vtkHybrid vtkWidgets)
     endif()
