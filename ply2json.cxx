@@ -10,6 +10,7 @@ using namespace std;
 static string inputFilename;
 static string outputFilename;
 
+
 int main( int argc, char ** argv )
 {
     if (argc != 3)
@@ -21,12 +22,12 @@ int main( int argc, char ** argv )
     inputFilename = argv[1];
     outputFilename = argv[2];
 
-    loadFile();
+    generateJSON();
 
     return EXIT_SUCCESS;
 }
 
-void loadFile()
+void generateJSON()
 {
     vtkSmartPointer<vtkPLYReader> reader =
         vtkSmartPointer<vtkPLYReader>::New();
@@ -41,4 +42,12 @@ void loadFile()
 
     vtkIdType poly = data->GetNumberOfCells();
     cout << "Polygons: " << poly << endl;
+
+    for(vtkIdType i = 0; i <= vert; i++)
+    {
+        double p[3];
+        data->GetPoint(i, p);
+        cout << "Point " << i << ": x " << p[0] << " y " << p[1]
+            << " z " << p[2] << endl;
+    }
 }
