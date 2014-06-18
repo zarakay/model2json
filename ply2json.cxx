@@ -1,16 +1,20 @@
 #include <vtkPLYReader.h>
 #include <vtkSmartPointer.h>
 
+#include <iostream>
+
+#include "ply2json.h"
+
 using namespace std;
 
-string inputFilename;
-string outputFilename;
+static string inputFilename;
+static string outputFilename;
 
 int main( int argc, char ** argv )
 {
     if (argc != 3)
     {
-        cout << "Usage: " << argv[0] << "filename.ply outputName" << endl;
+        cout << "Usage: " << argv[0] << " filename.ply outputName" << endl;
         return EXIT_FAILURE;
     }
 
