@@ -34,12 +34,11 @@ void loadFile()
     reader->SetFileName ( inputFilename.c_str() );
 
     reader->Update();
-    //reader->GetOutput()->Register(reader);
-    vtkPolyData * output = reader->GetOutput();
 
-    vtkIdType vert = output->GetNumberOfVerts();
-    cout << "verts: " << vert << endl;
+    vtkDataSet * data = reader->GetOutput();
+    vtkIdType vert = data->GetNumberOfPoints();
+    cout << "Vertices: " << vert << endl;
 
-    vtkIdType poly = output->GetNumberOfPolys();
-    cout << "polys: " << poly << endl;
+    vtkIdType poly = data->GetNumberOfCells();
+    cout << "Polygons: " << poly << endl;
 }
