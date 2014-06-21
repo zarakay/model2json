@@ -103,6 +103,7 @@ void generateJSON()
     vtkIdType vert;
     vtkPolyData * pdata;
     vtkCellArray * faces;
+    vtkSmartPointer<vtkPolyData> decimated;
 
     if (decAmount >= 1.0)
     {
@@ -113,7 +114,6 @@ void generateJSON()
         // Get the output for polygons
         pdata = reader->GetOutput();
         faces = pdata->GetPolys();
-
     }
     else if (decAmount < 0.0)
     {
@@ -134,16 +134,20 @@ void generateJSON()
         // start decimation
         decimate->Update();
 
+        decimated =
+            vtkSmartPointer<vtkPolyData>::New();
+        decimated->ShallowCopy(decimate->GetOutput());
+
         // Get the outpuyt for vertices
-        data = decimate->GetOutput();
-        vert = data->GetNumberOfPoints();
+        data = decimated;
+        vert = decimated->GetNumberOfPoints();
 
         // Get the output for polygons
-        pdata = decimate->GetOutput();
-        faces = pdata->GetPolys();
+        faces = decimated->GetPolys();
     }
 
     vtkIdType numCells = faces->GetNumberOfCells();
+
     vtkIdType cellLocation = 0;
 
     // Write the standard format header for the json file
@@ -161,7 +165,6 @@ void generateJSON()
         outputFile << p[0] << "," << p[1] << "," << p[2];
         if (i != vert - 1) outputFile << ","; // Avoid putting comma before end bracket
     }
-
     // End the vertices section
     outputFile << "],\n";
 
@@ -199,6 +202,9 @@ void generateJSON()
 
     // end the json file
     outputFile << "}\n";
+
+    // flush the file stream
+    outputFile.flush();
 
     // close file stream
     outputFile.close();
