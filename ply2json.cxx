@@ -98,13 +98,30 @@ void generateJSON()
     // Call vtk pipeline to read in the file
     reader->Update();
 
-    // Get the outpuyt for vertices
-    vtkDataSet * data = reader->GetOutput();
-    vtkIdType vert = data->GetNumberOfPoints();
+    vtkDataSet * data;
+    vtkIdType vert;
+    vtkPolyData * pdata;
+    vtkCellArray * faces;
 
-    // Get the output for polygons
-    vtkPolyData * pdata = reader->GetOutput();
-    vtkCellArray * faces = pdata->GetPolys();
+    if (decAmount >= 1.0)
+    {
+         // Get the outpuyt for vertices
+        data = reader->GetOutput();
+        vert = data->GetNumberOfPoints();
+
+        // Get the output for polygons
+        pdata = reader->GetOutput();
+        faces = pdata->GetPolys();
+
+    }
+    else if (decAmount < 0.0)
+    {
+        cout << "Invalid Decimate Amount, Program will now exit" << endl;
+        exit(EXIT_FAILURE);
+    } else
+    {
+
+    }
 
     vtkIdType numCells = faces->GetNumberOfCells();
     vtkIdType cellLocation = 0;
