@@ -51,6 +51,9 @@ int main( int argc, char ** argv )
     {
         // Print Usage Message
         cout << "Usage: " << argv[0] << " filename.ply outputName [decimate amount 0.0 .. 1.0]" << endl;
+        cout << "\nfilename.ply - Name of PLY file to convert" << endl;
+        cout << "outputName - Name of output file with extension" << endl;
+        cout << "decimate amount - Amount to decimate image by, zero is no decimation, one is maximum" << endl;
         return EXIT_FAILURE;
     }
 
