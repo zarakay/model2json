@@ -63,7 +63,7 @@ int main( int argc, char ** argv )
     }
     else
     {
-        decAmount = 1.0;
+        decAmount = 0.0;
     }
 
     // Assign appropriate file names for the program
@@ -102,16 +102,17 @@ void generateJSON()
     // Call vtk pipeline to read in the file
     reader->Update();
 
+    // Variables for storing polygons and points
     vtkDataSet * data;
     vtkIdType vert;
     vtkPolyData * pdata;
     vtkCellArray * faces;
     vtkSmartPointer<vtkPolyData> decimated;
 
-    if (decAmount >= 1.0)
+    if (decAmount == 0.0)
     {
          // Get the outpuyt for vertices
-        data = reader->GetOutput();
+        data = Reader->GetOutput();
         vert = data->GetNumberOfPoints();
 
         // Get the output for polygons
