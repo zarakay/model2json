@@ -17,6 +17,7 @@
 #include <vtkPLYReader.h>
 #include <vtkSmartPointer.h>
 #include <vtkCellArray.h>
+#include <vtkDecimatePro.h>
 
 // Import for standard C++ libraries
 #include <iostream>
@@ -120,6 +121,21 @@ void generateJSON()
         exit(EXIT_FAILURE);
     } else
     {
+        // create decimator
+        vtkSmartPointer<vtkDecimatePro> decimate = vtkSmartPointer<vtkDecimatePro>::New();
+
+        // set decimator to the selected file
+        decimate->SetInputData(reader->GetOutput());
+
+        // set target to reduce to, and set topology to be preserved
+        decimate->PreserveTopologyOn();
+        decimate->SetTargetReduction(decAmount);i
+
+        // start decimation
+        decimate->Update();
+
+
+
 
     }
 
