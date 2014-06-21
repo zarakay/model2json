@@ -129,14 +129,18 @@ void generateJSON()
 
         // set target to reduce to, and set topology to be preserved
         decimate->PreserveTopologyOn();
-        decimate->SetTargetReduction(decAmount);i
+        decimate->SetTargetReduction(decAmount);
 
         // start decimation
         decimate->Update();
 
+        // Get the outpuyt for vertices
+        data = decimate->GetOutput();
+        vert = data->GetNumberOfPoints();
 
-
-
+        // Get the output for polygons
+        pdata = decimate->GetOutput();
+        faces = pdata->GetPolys();
     }
 
     vtkIdType numCells = faces->GetNumberOfCells();
