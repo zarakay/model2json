@@ -33,6 +33,9 @@ static string inputFilename;
 // store the filename of the output file
 static string outputFilename;
 
+// set amount to decimate by, if set to 1 no decimation occurs
+static double decAmount;
+
 
 /*
  * Main Method
@@ -43,11 +46,20 @@ static string outputFilename;
  */
 int main( int argc, char ** argv )
 {
-    if (argc != 3)
+    if (argc  < 3)
     {
         // Print Usage Message
-        cout << "Usage: " << argv[0] << " filename.ply outputName" << endl;
+        cout << "Usage: " << argv[0] << " filename.ply outputName [decimate amount 0.0 .. 1.0]" << endl;
         return EXIT_FAILURE;
+    }
+
+    if (argc == 4)
+    {
+        decAmount = atof(argv[3]);
+    }
+    else
+    {
+        decAmount = 1.0;
     }
 
     // Assign appropriate file names for the program
@@ -59,7 +71,6 @@ int main( int argc, char ** argv )
 
     return EXIT_SUCCESS;
 }
-
 
 /*
  * Generate JSON Method
