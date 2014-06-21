@@ -112,7 +112,7 @@ void generateJSON()
     if (decAmount == 0.0)
     {
          // Get the outpuyt for vertices
-        data = Reader->GetOutput();
+        data = reader->GetOutput();
         vert = data->GetNumberOfPoints();
 
         // Get the output for polygons
