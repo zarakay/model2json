@@ -15,9 +15,12 @@
 #include <unistd.h>
 
 // Import conversion
-#include "convert2json.h"
+#include "ply2json.h"
+#include "vtk2json.h"
 
 using namespace std;
+
+enum ModelType {PLY, VTK};
 
 // // Input model types
 // static const char* PLY = "PLY";

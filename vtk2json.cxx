@@ -36,7 +36,7 @@ using namespace std;
  * JSON file to the output file name specified
  *
  */
-void convert2json(double decAmount, string inputFilename, string outputFilename, ModelType model) {
+void vtk2json(double decAmount, string inputFilename, string outputFilename) {
     // File stream for output file
     std::ofstream outputFile;
     outputFile.open(outputFilename.c_str());
@@ -45,13 +45,8 @@ void convert2json(double decAmount, string inputFilename, string outputFilename,
     outputFile << "{\n";
 
     // Reader to read in model
-    if (model == PLY) {
-        vtkSmartPointer<vtkPLYReader> reader =
-            vtkSmartPointer<vtkPLYReader>::New();
-    } else if (model == VTK) {
-        vtkSmartPointer<vtkGenericDataObjectReader> reader =
-            vtkSmartPointer<vtkGenericDataObjectReader>::New();
-    }
+    vtkSmartPointer<vtkGenericDataObjectReader> reader =
+        vtkSmartPointer<vtkGenericDataObjectReader>::New();
 
     // Specify filename
     reader->SetFileName ( inputFilename.c_str() );
@@ -67,25 +62,14 @@ void convert2json(double decAmount, string inputFilename, string outputFilename,
     vtkSmartPointer<vtkPolyData> decimated;
 
     if (decAmount == 0.0) {
-        if (model == PLY) {
-             // Get the output for vertices
-            data = reader->GetOutput();
-            vert = data->GetNumberOfPoints();
+        // Get the outpuyt for vertices
+        data = reader->GetPolyDataOutput();
+        vert = data->GetNumberOfPoints();
 
-            // Get the output for polygons
-            pdata = reader->GetOutput();
-            faces = pdata->GetPolys();
-        } else if (model == VTK) {
-             // Get the outpuyt for vertices
-            data = reader->GetPolyDataOutput();
-            vert = data->GetNumberOfPoints();
-
-            // Get the output for polygons
-            pdata = reader->GetPolyDataOutput();
-            faces = pdata->GetPolys();
-        }
-    }
-    else if (decAmount < 0.0) {
+        // Get the output for polygons
+        pdata = reader->GetPolyDataOutput();
+        faces = pdata->GetPolys();
+    } else if (decAmount < 0.0) {
         cout << "Invalid Decimate Amount, Program will now exit" << endl;
         exit(EXIT_FAILURE);
     } else {
