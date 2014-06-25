@@ -1,20 +1,19 @@
 /*
- * ply2json
+ * vtk2json.cxx
  *
- * The program is a ply file format to json file format converter for use
- * with three.js. The program uses the C++ libraries from the VTK toolkit
- * in order to read in a ply file and convert it into the json file format
- * which can be recongnized by three.js for rendering in the browsing.
+ * The program is a VTK file format to JSON file format converter.
+ * Generates JSON for use with three.js. Uses the C++ libraries 
+ * from the VTK toolkit.
  *
- * @Author Migara Liyanamage
- * @Date 19 June 2014
- * @Version 1.0
+ * Frank Zhao <frank@frankzhao.net>
+ * Migara Liyanamage <>
+ * June 2014
  *
  */
 
 
 // Import for VTK Libraries
-#include <vtkPLYReader.h>
+#include <vtkGenericDataObjectReader.h>
 #include <vtkSmartPointer.h>
 #include <vtkCellArray.h>
 #include <vtkDecimatePro.h>
@@ -24,7 +23,7 @@
 #include <fstream>
 
 // Import for program header
-#include "ply2json.h"
+#include "vtk2json.h"
 
 using namespace std;
 
@@ -45,7 +44,7 @@ static double decAmount;
  * and calls the appropriate methods to begin the conversion.
  *
  */
-int fuck( int argc, char ** argv )
+int shit( int argc, char ** argv )
 {
     if (argc  < 3)
     {
@@ -93,8 +92,8 @@ void generateJSON()
     outputFile << "{\n";
 
     // Reader to read in PLY File
-    vtkSmartPointer<vtkPLYReader> reader =
-        vtkSmartPointer<vtkPLYReader>::New();
+    vtkSmartPointer<vtkGenericDataObjectReader> reader =
+        vtkSmartPointer<vtkGenericDataObjectReader>::New();
 
     // Specify filename
     reader->SetFileName ( inputFilename.c_str() );
@@ -112,11 +111,11 @@ void generateJSON()
     if (decAmount == 0.0)
     {
          // Get the outpuyt for vertices
-        data = reader->GetOutput();
+        data = reader->GetPolyDataOutput();
         vert = data->GetNumberOfPoints();
 
         // Get the output for polygons
-        pdata = reader->GetOutput();
+        pdata = reader->GetPolyDataOutput();
         faces = pdata->GetPolys();
     }
     else if (decAmount < 0.0)
