@@ -1,10 +1,16 @@
-ply2json
+model2json
 ========
 
-PLY File Format to JSON Converter for use with Three.js
+3D Model File Format to JSON Converter for use with Three.js
 
-Using this program, a standard ply file can be converted into a JSON file which is compatible for loading into Three.js
-The program also allows you to decimate the PLY file and reduce to quality of the model. 
+Using this program, a 3D model file can be converted into a JSON file which is compatible for loading into Three.js
+The program also allows you to decimate the 3D models file and reduce to quality of the model. 
+
+###File Support
+
+* Polygon File Format (PLY)
+
+
 
 # How to Build
 
