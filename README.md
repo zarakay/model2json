@@ -9,12 +9,7 @@ The program also allows you to decimate the 3D models file and reduce to quality
 ###File Support
 
 * Polygon File Format (PLY)
-
-
-
-# How to Build
-
-Below are the requirements and steps to build the program
+* Visualisation Toolkit (VTK)
 
 ## Requirements
   
@@ -23,7 +18,7 @@ Below are the requirements and steps to build the program
 * [VTK Toolkit Shared Libraries] (www.vtk.org)
 * [CMake] (www.cmake.org) 
 
-## Build Commands
+## Building
 
 Firstly it is best to create a build folder since attempting to build in the source directory can cause problems. Once in the correct directory, cmake has to be used in order to create the make file for your system. Then the program can be built. The following commands will do this for you:
 
@@ -39,7 +34,7 @@ If the above commands ran successfully then you have successfully built model2js
 
 The are several ways to customize the build process with cmake, please look at the vtk website for the customizations.
 
-# How to Run
+# Running
 
 In order to run the program, the is used.
 
