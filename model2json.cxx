@@ -108,9 +108,9 @@ int main( int argc, char ** argv ) {
 
     // convert model
     if ( (fileExtension == "vtk") or (fileExtension == "VTK") ) {
-        convert2json(decimateAmount, inputFilename, outputFilename, VTK);  
+        vtk2json(decimateAmount, inputFilename, outputFilename);  
     } else if ( (fileExtension == "ply") or (fileExtension == "PLY") ) {
-        convert2json(decimateAmount, inputFilename, outputFilename, PLY);
+        ply2json(decimateAmount, inputFilename, outputFilename);
     }
 
     return EXIT_SUCCESS;
