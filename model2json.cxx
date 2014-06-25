@@ -33,7 +33,7 @@ int main( int argc, char ** argv ) {
         cout << "Usage: " << argv[0] << \
             " [-t] [-s] [-b] [-v] [-d 0.0 .. 1.0] filename output" << endl;
         cout << "-t\t\tPreserve topology" << endl;
-        cout << "-t\t\tEnable splitting" << endl;
+        cout << "-s\t\tEnable splitting" << endl;
         cout << "-b\t\tEnable boundary vertex deletion" << endl;
         cout << "-v\t\tVerbose" << endl;
         cout << "-d [0.0..1.0]\tDecimation amount (maximum 1.0)" << endl;

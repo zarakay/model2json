@@ -1,10 +1,16 @@
-ply2json
+model2json
 ========
 
-PLY File Format to JSON Converter for use with Three.js
+3D Model File Format to JSON Converter for use with Three.js
 
-Using this program, a standard ply file can be converted into a JSON file which is compatible for loading into Three.js
-The program also allows you to decimate the PLY file and reduce to quality of the model. 
+Using this program, a 3D model file can be converted into a JSON file which is compatible for loading into Three.js
+The program also allows you to decimate the 3D models file and reduce to quality of the model. 
+
+###File Support
+
+* Polygon File Format (PLY)
+
+
 
 # How to Build
 
@@ -29,7 +35,7 @@ cmake ..
 make
 ```
 
-If the above commands ran successfuly then you have successfully built ply2json. Congradulations!
+If the above commands ran successfully then you have successfully built model2json. Congratulations!
 
 The are several ways to customize the build process with cmake, please look at the vtk website for the customizations.
 
@@ -38,12 +44,15 @@ The are several ways to customize the build process with cmake, please look at t
 In order to run the program, the is used.
 
 ```
-ply2json filename.ply outputfile [decimate amount]
+model2json [-t] [-s] [-b] [-v] [-d 0.0 .. 1.0] filename output
 ```
 
-* **filename.ply** - Name of the PLY file to convert
-* **outputfile** - Name of the output file, include extension if you wish
-* **decimate amount** - Amount to decimate the image by, zero for no decimation, one for maximum, not including this simply converts without decimation
-
-The program should output `outputfile` which can be used with Three.js to visualize the browser. 
-
+```
+-t          Preserve topology
+-s          Enable splitting
+-b          Enable boundary vertex deletion
+-v          Verbose
+-d 0.0..1.0 Decimation amount (maximum 1.0)
+filename    File to convert
+output      Output file
+```
