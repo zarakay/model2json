@@ -14,11 +14,14 @@
 #include <iostream>
 #include <unistd.h>
 
-// Import for program header
-#include "vtk2json.h"
-#include "ply2json.h"
+// Import conversion
+#include "convert2json.h"
 
 using namespace std;
+
+// // Input model types
+// static const char* PLY = "PLY";
+// static const char* VTK = "VTK";
 
 /*
  * Main Method
@@ -100,23 +103,15 @@ int main( int argc, char ** argv ) {
         cout << "Decimate amount: " << decimateAmount << endl;
     }
     
-        //
-    //
-    // if (argc == 4)
-    // {
-    //     decAmount = atof(argv[3]);
-    // }
-    // else
-    // {
-    //     decAmount = 0.0;
-    // }
-    //
-    // // Assign appropriate file names for the program
-    // inputFilename = argv[1];
-    // outputFilename = argv[2];
-    //
-    // begin generation
-    //generateJSON();
+    // Find out whether it is PLY or VTK
+    string fileExtension = inputFilename.substr(inputFilename.size() - 3);
+
+    // convert model
+    if ( (fileExtension == "vtk") or (fileExtension == "VTK") ) {
+        convert2json(decimateAmount, inputFilename, outputFilename, VTK);  
+    } else if ( (fileExtension == "ply") or (fileExtension == "PLY") ) {
+        convert2json(decimateAmount, inputFilename, outputFilename, PLY);
+    }
 
     return EXIT_SUCCESS;
 }

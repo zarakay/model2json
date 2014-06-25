@@ -1,19 +1,20 @@
 /*
- * ply2json
+ * convert2json
  *
- * The program is a ply file format to json file format converter for use
+ * The program is a PLY/VTK file format to JSON file format converter for use
  * with three.js. The program uses the C++ libraries from the VTK toolkit
- * in order to read in a ply file and convert it into the json file format
- * which can be recongnized by three.js for rendering in the browsing.
+ * in order to read in a model file and convert it into the json file format
+ * which can be recongnized by three.js for rendering in browser WebGL.
  *
- * @Author Migara Liyanamage
- * @Date 19 June 2014
- * @Version 1.0
+ * Migara Liyanamage <>
+ * Frank Zhao <frank@frankzhao.net>
+ * June 2014
  *
  */
 
 
 // Import for VTK Libraries
+#include <vtkGenericDataObjectReader.h>
 #include <vtkPLYReader.h>
 #include <vtkSmartPointer.h>
 #include <vtkCellArray.h>
@@ -23,58 +24,14 @@
 #include <iostream>
 #include <fstream>
 
-// Import for program header
-#include "ply2json.h"
+// Import program header
+#include "convert2json.h"
 
 using namespace std;
 
-// stores the filename of the input file
-static string inputFilename;
-
-// store the filename of the output file
-static string outputFilename;
-
-// set amount to decimate by, if set to 1 no decimation occurs
-static double decAmount;
-
-
-/*
- * Main Method
- *
- * This method reads in the file which is to be converted from the command line
- * and calls the appropriate methods to begin the conversion.
- *
- */
-int fuck( int argc, char ** argv )
-{
-    if (argc  < 3)
-    {
-        // Print Usage Message
-        cout << "Usage: " << argv[0] << " filename.ply outputName [decimate amount 0.0 .. 1.0]" << endl;
-        cout << "\nfilename.ply - Name of PLY file to convert" << endl;
-        cout << "outputName - Name of output file with extension" << endl;
-        cout << "decimate amount - Amount to decimate image by, zero is no decimation, one is maximum" << endl;
-        return EXIT_FAILURE;
-    }
-
-    if (argc == 4)
-    {
-        decAmount = atof(argv[3]);
-    }
-    else
-    {
-        decAmount = 0.0;
-    }
-
-    // Assign appropriate file names for the program
-    inputFilename = argv[1];
-    outputFilename = argv[2];
-
-    // begin generation
-    generateJSON();
-
-    return EXIT_SUCCESS;
-}
+// // Input model types
+// static const char* PLY = "PLY";
+// static const char* VTK = "VTK";
 
 /*
  * Generate JSON Method
@@ -83,18 +40,21 @@ int fuck( int argc, char ** argv )
  * JSON file to the output file name specified
  *
  */
-void generateJSON()
-{
+void convert2json(double decAmount, string inputFilename, string outputFilename, ModelType model) {
     // File stream for output file
     std::ofstream outputFile;
     outputFile.open(outputFilename.c_str());
 
     // begin the json file
     outputFile << "{\n";
+    
+    // Conditional type declaration
+    typedef std::conditional<model == PLY,
+        vtkPLYReader, vtkGenericDataObjectReader>::type ModelPointer;
 
-    // Reader to read in PLY File
-    vtkSmartPointer<vtkPLYReader> reader =
-        vtkSmartPointer<vtkPLYReader>::New();
+    // Reader to read in model
+    vtkSmartPointer<ModelPointer> reader =
+        vtkSmartPointer<ModelPointer>::New();
 
     // Specify filename
     reader->SetFileName ( inputFilename.c_str() );
@@ -109,26 +69,34 @@ void generateJSON()
     vtkCellArray * faces;
     vtkSmartPointer<vtkPolyData> decimated;
 
-    if (decAmount == 0.0)
-    {
-         // Get the outpuyt for vertices
-        data = reader->GetOutput();
-        vert = data->GetNumberOfPoints();
+    if (decAmount == 0.0) {
+        if (model == PLY) {
+             // Get the output for vertices
+            data = reader->GetOutput();
+            vert = data->GetNumberOfPoints();
 
-        // Get the output for polygons
-        pdata = reader->GetOutput();
-        faces = pdata->GetPolys();
+            // Get the output for polygons
+            pdata = reader->GetOutput();
+            faces = pdata->GetPolys();
+        } else if (model == VTK) {
+             // Get the outpuyt for vertices
+            data = reader->GetPolyDataOutput();
+            vert = data->GetNumberOfPoints();
+
+            // Get the output for polygons
+            pdata = reader->GetPolyDataOutput();
+            faces = pdata->GetPolys();
+        }
     }
-    else if (decAmount < 0.0)
-    {
+    else if (decAmount < 0.0) {
         cout << "Invalid Decimate Amount, Program will now exit" << endl;
         exit(EXIT_FAILURE);
-    } else
-    {
+    } else {
         // create decimator
         vtkSmartPointer<vtkDecimatePro> decimate = vtkSmartPointer<vtkDecimatePro>::New();
 
         // set decimator to the selected file
+        //TODO change this if it breaks with VTK
         decimate->SetInputData(reader->GetOutput());
 
         // set target to reduce to, and set topology to be preserved
@@ -162,8 +130,7 @@ void generateJSON()
     outputFile << "\"vertices\":[";
 
     // Iterate over all the points and print them to the file
-    for(vtkIdType i = 0; i < vert; i++)
-    {
+    for(vtkIdType i = 0; i < vert; i++) {
         double p[3];
         data->GetPoint(i, p);
         outputFile << p[0] << "," << p[1] << "," << p[2];
@@ -176,26 +143,22 @@ void generateJSON()
     outputFile << "\"faces\":[";
 
     // Iterate over the faces and print them to file
-    for (vtkIdType i = 0; i < numCells; i++)
-    {
+    for (vtkIdType i = 0; i < numCells; i++) {
         vtkIdType numIDs;
         vtkIdType * pointIds;
 
         faces->GetCell(cellLocation, numIDs, pointIds);
         cellLocation += 1 + numIDs; // increment to include already printed faces
 
-        for (vtkIdType j = 0; j < numIDs; j++)
-        {
+        for (vtkIdType j = 0; j < numIDs; j++) {
             // print to the file
             // printing the zero is for the bit mask signifying face type
             if (j == 0) outputFile << 0 << ",";
             outputFile << pointIds[j];
-            if (i != numCells - 1)
-            {
+            if (i != numCells - 1) {
                 outputFile << ",";
             }
-            else
-            {
+            else {
                 if(j != numIDs - 1) outputFile << ","; // avoid additional comma at end
             }
         }

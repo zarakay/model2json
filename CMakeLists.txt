@@ -5,7 +5,7 @@ PROJECT(model2json)
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
  
-add_executable(model2json model2json)
+add_executable(model2json model2json convert2json)
  
 if(VTK_LIBRARIES)
       target_link_libraries(model2json ${VTK_LIBRARIES})
