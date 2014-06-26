@@ -111,9 +111,11 @@ int main( int argc, char ** argv ) {
 
     // convert model
     if ( (fileExtension == "vtk") or (fileExtension == "VTK") ) {
-        vtk2json(decimateAmount, inputFilename, outputFilename);  
+        vtk2json(preserveTopology, splitting, boundaryVertexDeletion, 
+            verbose, decimateAmount, inputFilename, outputFilename);  
     } else if ( (fileExtension == "ply") or (fileExtension == "PLY") ) {
-        ply2json(decimateAmount, inputFilename, outputFilename);
+        ply2json(preserveTopology, splitting, boundaryVertexDeletion, 
+            verbose, decimateAmount, inputFilename, outputFilename);  
     }
 
     return EXIT_SUCCESS;

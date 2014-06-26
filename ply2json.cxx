@@ -35,7 +35,8 @@ using namespace std;
  * JSON file to the output file name specified
  *
  */
-void ply2json(double decAmount, string inputFilename, string outputFilename) {
+void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion, 
+    bool verbose, float decAmount, std::string inputFilename, std::string outputFilename) {
    // File stream for output file
     std::ofstream outputFile;
     outputFile.open(outputFilename.c_str());
@@ -62,7 +63,7 @@ void ply2json(double decAmount, string inputFilename, string outputFilename) {
 
     if (decAmount == 0.0)
     {
-         // Get the outpuyt for vertices
+         // Get the output for vertices
         data = reader->GetOutput();
         vert = data->GetNumberOfPoints();
 
@@ -83,7 +84,17 @@ void ply2json(double decAmount, string inputFilename, string outputFilename) {
         decimate->SetInputData(reader->GetOutput());
 
         // set target to reduce to, and set topology to be preserved
-        decimate->PreserveTopologyOn();
+        if (preserveTopology) {decimate->PreserveTopologyOn();} 
+        else {decimate->PreserveTopologyOff();}
+        
+        // splitting
+        if (splitting) {decimate->SplittingOn();}
+        else {decimate->SplittingOff();}
+        
+        // Boundary vertex deletion
+        if (boundaryVertexDeletion) {decimate->BoundaryVertexDeletionOn();}
+        else {decimate->BoundaryVertexDeletionOff();}
+        
         decimate->SetTargetReduction(decAmount);
 
         // start decimation
