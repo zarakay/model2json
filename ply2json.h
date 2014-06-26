@@ -1,6 +1,7 @@
-#ifndef PLY2JSON_H
-#define PLY2JSON_H
+#ifndef ply2json_h
+#define ply2json_h
 
-void generateJSON();
-
+void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion, 
+    bool verbose, float decAmount, std::string inputFilename, std::string outputFilename);
+    
 #endif

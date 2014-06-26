@@ -1,5 +1,5 @@
 /*
- * ply2json
+ * vtk2json
  *
  * The program is a PLY/VTK file format to JSON file format converter for use
  * with three.js. The program uses the C++ libraries from the VTK toolkit
@@ -14,6 +14,7 @@
 
 
 // Import for VTK Libraries
+#include <vtkGenericDataObjectReader.h>
 #include <vtkPLYReader.h>
 #include <vtkSmartPointer.h>
 #include <vtkCellArray.h>
@@ -24,7 +25,7 @@
 #include <fstream>
 
 // Import program header
-#include "ply2json.h"
+#include "vtk2json.h"
 
 using namespace std;
 
@@ -35,18 +36,18 @@ using namespace std;
  * JSON file to the output file name specified
  *
  */
-void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion, 
+void vtk2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion, 
     bool verbose, float decAmount, std::string inputFilename, std::string outputFilename) {
-   // File stream for output file
+    // File stream for output file
     std::ofstream outputFile;
     outputFile.open(outputFilename.c_str());
 
     // begin the json file
     outputFile << "{\n";
 
-    // Reader to read in PLY File
-    vtkSmartPointer<vtkPLYReader> reader =
-        vtkSmartPointer<vtkPLYReader>::New();
+    // Reader to read in model
+    vtkSmartPointer<vtkGenericDataObjectReader> reader =
+        vtkSmartPointer<vtkGenericDataObjectReader>::New();
 
     // Specify filename
     reader->SetFileName ( inputFilename.c_str() );
@@ -61,22 +62,18 @@ void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion
     vtkCellArray * faces;
     vtkSmartPointer<vtkPolyData> decimated;
 
-    if (decAmount == 0.0)
-    {
-         // Get the output for vertices
-        data = reader->GetOutput();
+    if (decAmount == 0.0) {
+        // Get the output for vertices
+        data = reader->GetPolyDataOutput();
         vert = data->GetNumberOfPoints();
 
         // Get the output for polygons
-        pdata = reader->GetOutput();
+        pdata = reader->GetPolyDataOutput();
         faces = pdata->GetPolys();
-    }
-    else if (decAmount < 0.0)
-    {
+    } else if (decAmount < 0.0) {
         cout << "Invalid Decimate Amount, Program will now exit" << endl;
         exit(EXIT_FAILURE);
-    } else
-    {
+    } else {
         // create decimator
         vtkSmartPointer<vtkDecimatePro> decimate = vtkSmartPointer<vtkDecimatePro>::New();
 
@@ -124,8 +121,7 @@ void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion
     outputFile << "\"vertices\":[";
 
     // Iterate over all the points and print them to the file
-    for(vtkIdType i = 0; i < vert; i++)
-    {
+    for(vtkIdType i = 0; i < vert; i++) {
         double p[3];
         data->GetPoint(i, p);
         outputFile << p[0] << "," << p[1] << "," << p[2];
@@ -138,26 +134,22 @@ void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion
     outputFile << "\"faces\":[";
 
     // Iterate over the faces and print them to file
-    for (vtkIdType i = 0; i < numCells; i++)
-    {
+    for (vtkIdType i = 0; i < numCells; i++) {
         vtkIdType numIDs;
         vtkIdType * pointIds;
 
         faces->GetCell(cellLocation, numIDs, pointIds);
         cellLocation += 1 + numIDs; // increment to include already printed faces
 
-        for (vtkIdType j = 0; j < numIDs; j++)
-        {
+        for (vtkIdType j = 0; j < numIDs; j++) {
             // print to the file
             // printing the zero is for the bit mask signifying face type
             if (j == 0) outputFile << 0 << ",";
             outputFile << pointIds[j];
-            if (i != numCells - 1)
-            {
+            if (i != numCells - 1) {
                 outputFile << ",";
             }
-            else
-            {
+            else {
                 if(j != numIDs - 1) outputFile << ","; // avoid additional comma at end
             }
         }
