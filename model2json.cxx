@@ -13,6 +13,7 @@
 // Import for standard C++ libraries
 #include <iostream>
 #include <unistd.h>
+#include <stdlib.h>
 
 // Import conversion
 #include "ply2json.h"
@@ -47,20 +48,20 @@ int main( int argc, char ** argv ) {
         cout << "output\t\tOutput file" << endl;
         return EXIT_FAILURE;
     }
-    
+
     // commandline paramaters
     // stores the filename of the input file
     string inputFilename;
     // store the filename of the output file
     string outputFilename;
-    
+
     char flag;
     double decimateAmount;
     bool preserveTopology = false,
             splitting = false,
             boundaryVertexDeletion = false,
             verbose = false;
-    
+
     extern char *optarg;
     extern int optind;
     while ((flag = getopt(argc, argv, "tsvbd:")) != -1) {
@@ -85,7 +86,7 @@ int main( int argc, char ** argv ) {
                 break;
         }
     }
-    
+
     // input and output files
     if (optind < argc) {
         inputFilename  = argv[optind];
@@ -97,7 +98,7 @@ int main( int argc, char ** argv ) {
     } else {
         cout << "Input or output file not specified!" << endl;
     }
-    
+
     if (verbose) {
         cout << "Attempting to run conversion with:" << endl;
         cout << "Preserve topology: " << preserveTopology << endl;
@@ -105,17 +106,17 @@ int main( int argc, char ** argv ) {
         cout << "Boundary Vertex Deletion: " << boundaryVertexDeletion << endl;
         cout << "Decimate amount: " << decimateAmount << endl;
     }
-    
+
     // Find out whether it is PLY or VTK
     string fileExtension = inputFilename.substr(inputFilename.size() - 3);
 
     // convert model
     if ( (fileExtension == "vtk") or (fileExtension == "VTK") ) {
-        vtk2json(preserveTopology, splitting, boundaryVertexDeletion, 
-            verbose, decimateAmount, inputFilename, outputFilename);  
+        vtk2json(preserveTopology, splitting, boundaryVertexDeletion,
+            verbose, decimateAmount, inputFilename, outputFilename);
     } else if ( (fileExtension == "ply") or (fileExtension == "PLY") ) {
-        ply2json(preserveTopology, splitting, boundaryVertexDeletion, 
-            verbose, decimateAmount, inputFilename, outputFilename);  
+        ply2json(preserveTopology, splitting, boundaryVertexDeletion,
+            verbose, decimateAmount, inputFilename, outputFilename);
     }
 
     return EXIT_SUCCESS;

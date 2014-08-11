@@ -18,10 +18,12 @@
 #include <vtkSmartPointer.h>
 #include <vtkCellArray.h>
 #include <vtkDecimatePro.h>
+#include <vtkMassProperties.h>
 
 // Import for standard C++ libraries
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
 
 // Import program header
 #include "ply2json.h"
@@ -35,7 +37,7 @@ using namespace std;
  * JSON file to the output file name specified
  *
  */
-void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion, 
+void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion,
     bool verbose, float decAmount, std::string inputFilename, std::string outputFilename) {
    // File stream for output file
     std::ofstream outputFile;
@@ -84,17 +86,17 @@ void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion
         decimate->SetInputData(reader->GetOutput());
 
         // set target to reduce to, and set topology to be preserved
-        if (preserveTopology) {decimate->PreserveTopologyOn();} 
+        if (preserveTopology) {decimate->PreserveTopologyOn();}
         else {decimate->PreserveTopologyOff();}
-        
+
         // splitting
         if (splitting) {decimate->SplittingOn();}
         else {decimate->SplittingOff();}
-        
+
         // Boundary vertex deletion
         if (boundaryVertexDeletion) {decimate->BoundaryVertexDeletionOn();}
         else {decimate->BoundaryVertexDeletionOff();}
-        
+
         decimate->SetTargetReduction(decAmount);
 
         // start decimation
@@ -112,12 +114,17 @@ void ply2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion
         faces = decimated->GetPolys();
     }
 
+    // Get Volumetric data
+    vtkSmartPointer<vtkMassProperties> props = vtkSmartPointer<vtkMassProperties>::New();
+    props->SetInputData(data);
+    props->Update();
+
     vtkIdType numCells = faces->GetNumberOfCells();
 
     vtkIdType cellLocation = 0;
 
     // Write the standard format header for the json file
-    outputFile << "\"metadata\":{\"formatVersion\":3,\"vertices\":" << vert << ",\"faces\":" << numCells << ",\"materials\":1},\n";
+    outputFile << "\"metadata\":{\"formatVersion\":3,\"vertices\":" << vert << ",\"faces\":" << numCells << ",\"materials\":1,\"volume\":" << props->GetVolume() << ",\"surface_area\":" << props->GetSurfaceArea() << "},\n";
     outputFile << "\"scale\":1.0,\n\"materials\":[{\"DbgColor\":15658734,\"DbgIndex\":0,\"DbgName\":\"default\",\"vertexColors\": false}],\n";
 
     // Begin writing vertices
