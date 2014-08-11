@@ -19,6 +19,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkCellArray.h>
 #include <vtkDecimatePro.h>
+#include <vtkMassProperties.h>
 
 // Import for standard C++ libraries
 #include <iostream>
@@ -70,6 +71,7 @@ void vtk2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion
         // Get the output for polygons
         pdata = reader->GetPolyDataOutput();
         faces = pdata->GetPolys();
+        
     } else if (decAmount < 0.0) {
         cout << "Invalid Decimate Amount, Program will now exit" << endl;
         exit(EXIT_FAILURE);
@@ -101,20 +103,26 @@ void vtk2json(bool preserveTopology, bool splitting, bool boundaryVertexDeletion
             vtkSmartPointer<vtkPolyData>::New();
         decimated->ShallowCopy(decimate->GetOutput());
 
-        // Get the outpuyt for vertices
+        // Get the output for vertices
         data = decimated;
         vert = decimated->GetNumberOfPoints();
 
         // Get the output for polygons
         faces = decimated->GetPolys();
     }
+    
+    // Calculate VTK model properties
+    vtkSmartPointer<vtkMassProperties> mass = vtkMassProperties::New();
+    mass->SetInputData(data);
+    mass->Update();
 
     vtkIdType numCells = faces->GetNumberOfCells();
 
     vtkIdType cellLocation = 0;
 
     // Write the standard format header for the json file
-    outputFile << "\"metadata\":{\"formatVersion\":3,\"vertices\":" << vert << ",\"faces\":" << numCells << ",\"materials\":1},\n";
+    
+    outputFile << "\"metadata\":{\"formatVersion\":3,\"vertices\":" << vert << ",\"faces\":" << numCells << ",\"materials\":1,\"volume\":" << mass->GetVolume() << ",\"surface_area\":" << mass->GetSurfaceArea() << "},\n";
     outputFile << "\"scale\":1.0,\n\"materials\":[{\"DbgColor\":15658734,\"DbgIndex\":0,\"DbgName\":\"default\",\"vertexColors\": false}],\n";
 
     // Begin writing vertices
