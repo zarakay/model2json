@@ -1,9 +1,9 @@
 model2json
 ========
 
-3D Model File Format to JSON Converter for use with Three.js
+3D Model File Format to JSON Converter for use with three.js
 
-Using this program, a 3D model file can be converted into a JSON file which is compatible for loading into Three.js
+Using this program, a 3D model file can be converted into a JSON file which is compatible for loading into three.js
 The program also allows you to decimate the 3D models file and reduce to quality of the model. 
 
 ###File Support
@@ -13,15 +13,14 @@ The program also allows you to decimate the 3D models file and reduce to quality
 
 ## Requirements
   
-  The following requirements must be available in the system in order to build and run the program
+The following system requirements are required to build and run the program:
   
-* [VTK Toolkit Shared Libraries] (www.vtk.org)
-* [CMake] (www.cmake.org) 
+* [VTK Toolkit Shared Libraries] (http://www.vtk.org)
+* [CMake] (http://www.cmake.org) 
 
 ## Building
 
-Firstly it is best to create a build folder since attempting to build in the source directory can cause problems. Once in the correct directory, cmake has to be used in order to create the make file for your system. Then the program can be built. The following commands will do this for you:
-
+It is best to create a build folder outside of the source directory. Once in the build directory, CMake can be used to create a makefile, used for installing. The following commands will create an executable binary from the source:
 
 ```
 mkdir build
@@ -36,10 +35,10 @@ The are several ways to customize the build process with cmake, please look at t
 
 # Running
 
-In order to run the program, the is used.
+The usage and syntax is given below. The usage and syntax is given below. Note that a decimation value is always required, and must be specified with the `-d` flag.
 
 ```
-model2json [-t] [-s] [-b] [-v] [-d 0.0 .. 1.0] filename output
+model2json -d 0.0 .. 1.0 [-t] [-s] [-b] [-v] filename output
 ```
 
 ```
